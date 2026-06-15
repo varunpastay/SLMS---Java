@@ -1,0 +1,61 @@
+/* SLMS Custom Styles */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+}
+
+.navbar-brand {
+  letter-spacing: 0.05em;
+}
+
+/* Card hover lift */
+.card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 .5rem 1.5rem rgba(0,0,0,.1) !important;
+}
+
+/* Sidebar list group active */
+.list-group-item.active {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+/* Quiz question card */
+.list-group-item-action:hover {
+  background-color: #e9f0ff;
+  cursor: pointer;
+}
+
+/* Message bubbles */
+#messageBox {
+  gap: 4px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+
+/* Notification badge pulse */
+@keyframes pulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.2); }
+}
+#notifCount:not([style*="none"]) {
+  animation: pulse 1.5s infinite;
+}
+
+/* Table row highlight for current user on leaderboard */
+.table-warning td {
+  background-color: #fff3cd !important;
+}
+
+/* Certificate card */
+.border-warning.border-2 {
+  border-width: 2px !important;
+}

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(New-Item -ItemType Directory -Path \"c:\\\\Users\\\\asus\\\\OneDrive\\\\Desktop\\\\slms__java\\\\src\\\\main\\\\webapp\\\\views\\\\error\" -Force)",
+      "PowerShell(& \"C:\\\\apache-tomcat-10.1.54\\\\apache-tomcat-10.1.54\\\\bin\\\\startup.bat\")",
+      "PowerShell(Get-Process -Id 4952)",
+      "PowerShell(taskkill /F /IM java.exe 2>$null; Start-Sleep -Seconds 2; $env:JAVA_HOME = \"C:\\\\Program Files\\\\Java\\\\jdk-19\"; $env:CATALINA_HOME = \"C:\\\\apache-tomcat-10.1.54\\\\apache-tomcat-10.1.54\"; & \"C:\\\\apache-tomcat-10.1.54\\\\apache-tomcat-10.1.54\\\\bin\\\\startup.bat\")",
+      "PowerShell(netstat -ano)",
+      "PowerShell(cd \"C:\\\\Users\\\\asus\\\\OneDrive\\\\Desktop\\\\slms__java\"; mvn compile -q; mvn exec:java -Dexec.mainClass=\"com.slms.util.HashGen\" -Dexec.args=\"Admin@123\" -q 2>&1 | Select-String -Pattern \"Hash|Verified|\\\\$2\")",
+      "PowerShell(cd \"C:\\\\Users\\\\asus\\\\OneDrive\\\\Desktop\\\\slms__java\"; mvn compile -q; mvn exec:java \"-Dexec.mainClass=com.slms.util.HashGen\" \"-Dexec.args=Admin@123\" 2>&1 | Where-Object { $_ -match \"Hash|Verified|2a\" })"
+    ]
+  }
+}
