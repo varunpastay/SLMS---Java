@@ -177,4 +177,30 @@ public class UserDAOImpl implements UserDAO {
             return rs.next() ? rs.getInt(1) : 0;
         }
     }
+
+    @Override
+    public void toggleActive(int id) throws SQLException {
+        String sql = "UPDATE users SET is_active = NOT is_active WHERE id = ?";
+        try (Connection con = DBConfig.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        }
+    }
+
+    @Override
+    public List<UserDTO> searchByName(String query) throws SQLException {
+        String sql = "SELECT * FROM users WHERE CONCAT(first_name,' ',last_name) LIKE ? OR username LIKE ? ORDER BY first_name LIMIT 20";
+        String pattern = "%" + query + "%";
+        List<UserDTO> list = new ArrayList<>();
+        try (Connection con = DBConfig.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, pattern);
+            ps.setString(2, pattern);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(mapRow(rs));
+            }
+        }
+        return list;
+    }
 }

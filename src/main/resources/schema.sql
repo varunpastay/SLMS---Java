@@ -210,6 +210,59 @@ CREATE TABLE IF NOT EXISTS certificates (
     UNIQUE KEY unique_cert (student_id, course_id)
 );
 
+-- Announcements (teacher posts to enrolled students)
+CREATE TABLE IF NOT EXISTS announcements (
+    id         INT AUTO_INCREMENT PRIMARY KEY,
+    course_id  INT NOT NULL,
+    author_id  INT NOT NULL,
+    title      VARCHAR(255) NOT NULL,
+    body       TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    FOREIGN KEY (author_id) REFERENCES users(id)
+);
+
+-- Password reset tokens
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+    id         INT AUTO_INCREMENT PRIMARY KEY,
+    user_id    INT NOT NULL,
+    token      VARCHAR(64) UNIQUE NOT NULL,
+    expires_at DATETIME NOT NULL,
+    used       BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Assignment rubric items
+CREATE TABLE IF NOT EXISTS rubric_items (
+    id            INT AUTO_INCREMENT PRIMARY KEY,
+    assignment_id INT NOT NULL,
+    criterion     VARCHAR(255) NOT NULL,
+    max_marks     INT NOT NULL,
+    FOREIGN KEY (assignment_id) REFERENCES assignments(id) ON DELETE CASCADE
+);
+
+-- Per-criterion grades for a submission
+CREATE TABLE IF NOT EXISTS rubric_grades (
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+    submission_id  INT NOT NULL,
+    rubric_item_id INT NOT NULL,
+    marks_awarded  DECIMAL(5,2) NOT NULL DEFAULT 0,
+    UNIQUE KEY unique_rubric_grade (submission_id, rubric_item_id),
+    FOREIGN KEY (submission_id)  REFERENCES submissions(id) ON DELETE CASCADE,
+    FOREIGN KEY (rubric_item_id) REFERENCES rubric_items(id) ON DELETE CASCADE
+);
+
+-- Activity / audit log
+CREATE TABLE IF NOT EXISTS activity_logs (
+    id         INT AUTO_INCREMENT PRIMARY KEY,
+    user_id    INT,
+    action     VARCHAR(100) NOT NULL,
+    details    TEXT,
+    ip_address VARCHAR(45),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
 -- Seed: default admin account (password: Admin@123)
 INSERT IGNORE INTO users (username, email, password_hash, role, first_name, last_name, is_active)
 VALUES ('admin', 'admin@slms.com',

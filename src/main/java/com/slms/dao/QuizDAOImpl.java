@@ -226,6 +226,21 @@ public class QuizDAOImpl implements QuizDAO {
     }
 
     @Override
+    public List<QuizAttemptDTO> findAttemptsByQuiz(int quizId) throws SQLException {
+        String sql = "SELECT qa.*, q.title AS quiz_title FROM quiz_attempts qa JOIN quizzes q ON qa.quiz_id=q.id " +
+                     "WHERE qa.quiz_id=? ORDER BY qa.attempted_at DESC";
+        List<QuizAttemptDTO> list = new ArrayList<>();
+        try (Connection con = DBConfig.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, quizId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(mapAttempt(rs));
+            }
+        }
+        return list;
+    }
+
+    @Override
     public Map<Integer, Character> findAnswersByAttempt(int attemptId) throws SQLException {
         String sql = "SELECT question_id, selected_option FROM quiz_answers WHERE attempt_id=?";
         Map<Integer, Character> map = new HashMap<>();

@@ -22,5 +22,6 @@ public interface QuizDAO {
     void saveAnswer(int attemptId, int questionId, char selectedOption) throws SQLException;
     QuizAttemptDTO findAttemptByStudentAndQuiz(int studentId, int quizId) throws SQLException;
     List<QuizAttemptDTO> findAttemptsByStudent(int studentId) throws SQLException;
+    List<QuizAttemptDTO> findAttemptsByQuiz(int quizId) throws SQLException;
     Map<Integer, Character> findAnswersByAttempt(int attemptId) throws SQLException;
 }

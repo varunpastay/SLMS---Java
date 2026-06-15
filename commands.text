@@ -1,0 +1,18 @@
+mvn clean package ; 
+
+copy target\slms.war "C:\apache-tomcat-10.1.54\apache-tomcat-10.1.54\webapps\"
+
+
+$env:CATALINA_HOME = "C:\apache-tomcat-10.1.54\apache-tomcat-10.1.54" ; 
+C:\apache-tomcat-10.1.54\apache-tomcat-10.1.54\bin\startup.bat
+
+
+http://localhost:8081/slms/login
+
+
+
+
+
+To stop:
+
+C:\apache-tomcat-10.1.54\apache-tomcat-10.1.54\bin\shutdown.bat

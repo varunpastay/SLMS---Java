@@ -17,4 +17,6 @@ public interface UserDAO {
     boolean existsByEmail(String email) throws SQLException;
     boolean existsByUsername(String username) throws SQLException;
     int countAll() throws SQLException;
+    void toggleActive(int id) throws SQLException;
+    List<UserDTO> searchByName(String query) throws SQLException;
 }

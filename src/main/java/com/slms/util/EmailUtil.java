@@ -114,5 +114,18 @@ public class EmailUtil {
         send(toEmail, "New Quiz: " + quizTitle, body);
     }
 
+    public static void sendPasswordReset(String toEmail, String name, String resetLink) {
+        String body = "<div style='font-family:sans-serif;max-width:480px;margin:auto;border:1px solid #dee2e6;border-radius:8px;padding:32px'>" +
+                      "<h2 style='color:#0d6efd'>SLMS – Password Reset</h2>" +
+                      "<p>Hi <strong>" + name + "</strong>,</p>" +
+                      "<p>We received a request to reset your password. Click the button below. The link expires in <strong>30 minutes</strong>.</p>" +
+                      "<div style='text-align:center;margin:24px 0'>" +
+                      "<a href='" + resetLink + "' style='background:#0d6efd;color:#fff;padding:12px 28px;" +
+                      "border-radius:6px;text-decoration:none;font-weight:600'>Reset Password</a></div>" +
+                      "<p style='color:#6c757d;font-size:.9rem'>If you did not request this, you can safely ignore this email.</p>" +
+                      "</div>";
+        send(toEmail, "SLMS – Reset Your Password", body);
+    }
+
     private EmailUtil() {}
 }

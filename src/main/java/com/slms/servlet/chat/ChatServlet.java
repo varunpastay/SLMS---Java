@@ -59,7 +59,10 @@ public class ChatServlet extends HttpServlet {
             }
 
             List<UserDTO> partners = chatDAO.findConversationPartners(me.getId());
+            List<UserDTO> allUsers = userDAO.findAll();
+            allUsers.removeIf(u -> u.getId() == me.getId());
             req.setAttribute("partners", partners);
+            req.setAttribute("allUsers", allUsers);
             req.getRequestDispatcher("/views/chat/chatRoom.jsp").forward(req, resp);
         } catch (Exception e) { throw new ServletException(e); }
     }

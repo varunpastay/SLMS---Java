@@ -29,9 +29,12 @@
                 <code class="fs-6">${cert.certificateCode}</code>
               </div>
             </div>
-            <div class="card-footer bg-transparent">
+            <div class="card-footer bg-transparent d-flex gap-2 justify-content-center">
               <a href="${ctx}/certificate/verify?code=${cert.certificateCode}" target="_blank" class="btn btn-sm btn-outline-warning">
-                <i class="bi bi-link-45deg me-1"></i>Verify Certificate
+                <i class="bi bi-link-45deg me-1"></i>Verify
+              </a>
+              <a href="${ctx}/certificate/download?id=${cert.id}" class="btn btn-sm btn-warning">
+                <i class="bi bi-download me-1"></i>Download PDF
               </a>
             </div>
           </div>

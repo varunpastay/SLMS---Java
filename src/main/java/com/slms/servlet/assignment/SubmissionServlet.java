@@ -60,7 +60,9 @@ public class SubmissionServlet extends HttpServlet {
                 // Grade form
                 if (!SessionUtil.requireRole(req, resp, "TEACHER", "ADMIN")) return;
                 int id = Integer.parseInt(req.getParameter("id"));
-                req.setAttribute("submission", submissionDAO.findById(id));
+                SubmissionDTO sub = submissionDAO.findById(id);
+                req.setAttribute("submission", sub);
+                req.setAttribute("assignment", assignmentDAO.findById(sub.getAssignmentId()));
                 req.getRequestDispatcher("/views/assignment/gradeForm.jsp").forward(req, resp);
 
             } else {
@@ -87,6 +89,15 @@ public class SubmissionServlet extends HttpServlet {
                 int id = Integer.parseInt(req.getParameter("id"));
                 BigDecimal marks = new BigDecimal(req.getParameter("marks"));
                 String feedback = req.getParameter("feedback");
+                SubmissionDTO subCheck = submissionDAO.findById(id);
+                AssignmentDTO aCheck = assignmentDAO.findById(subCheck.getAssignmentId());
+                if (marks.compareTo(BigDecimal.ZERO) < 0 || marks.compareTo(new BigDecimal(aCheck.getMaxMarks())) > 0) {
+                    req.setAttribute("submission", subCheck);
+                    req.setAttribute("assignment", aCheck);
+                    req.setAttribute("error", "Marks must be between 0 and " + aCheck.getMaxMarks());
+                    req.getRequestDispatcher("/views/assignment/gradeForm.jsp").forward(req, resp);
+                    return;
+                }
                 submissionDAO.grade(id, marks, feedback);
 
                 SubmissionDTO sub = submissionDAO.findById(id);

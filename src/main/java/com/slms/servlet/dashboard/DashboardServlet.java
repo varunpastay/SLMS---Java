@@ -95,9 +95,16 @@ public class DashboardServlet extends HttpServlet {
         int totalEnrollments = enrollmentDAO.countAll();
         List<UserDTO> allUsers = userDAO.findAll();
 
+        long totalStudents = allUsers.stream().filter(u -> "STUDENT".equals(u.getRole())).count();
+        long totalTeachers = allUsers.stream().filter(u -> "TEACHER".equals(u.getRole())).count();
+        long totalAdmins   = allUsers.stream().filter(u -> "ADMIN".equals(u.getRole())).count();
+
         req.setAttribute("totalUsers", totalUsers);
         req.setAttribute("totalCourses", totalCourses);
         req.setAttribute("totalEnrollments", totalEnrollments);
         req.setAttribute("allUsers", allUsers);
+        req.setAttribute("totalStudents", totalStudents);
+        req.setAttribute("totalTeachers", totalTeachers);
+        req.setAttribute("totalAdmins", totalAdmins);
     }
 }

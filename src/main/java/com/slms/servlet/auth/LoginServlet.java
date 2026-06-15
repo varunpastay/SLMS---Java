@@ -1,5 +1,7 @@
 package com.slms.servlet.auth;
 
+import com.slms.dao.ActivityLogDAO;
+import com.slms.dao.ActivityLogDAOImpl;
 import com.slms.dao.UserDAO;
 import com.slms.dao.UserDAOImpl;
 import com.slms.dto.UserDTO;
@@ -17,10 +19,12 @@ import java.io.IOException;
 public class LoginServlet extends HttpServlet {
 
     private UserDAO userDAO;
+    private ActivityLogDAO activityLogDAO;
 
     @Override
     public void init() {
-        userDAO = new UserDAOImpl();
+        userDAO        = new UserDAOImpl();
+        activityLogDAO = new ActivityLogDAOImpl();
     }
 
     @Override
@@ -52,6 +56,7 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
             SessionUtil.setLoggedUser(req, user);
+            activityLogDAO.log(user.getId(), "LOGIN", "User logged in", req.getRemoteAddr());
             resp.sendRedirect(req.getContextPath() + "/dashboard");
         } catch (Exception e) {
             req.setAttribute("error", "An error occurred. Please try again.");
