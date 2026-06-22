@@ -62,7 +62,7 @@
           </a>
         </li>
 
-        <c:if test="${user.role == 'TEACHER' or user.role == 'ADMIN'}">
+        <c:if test="${user.role == 'TEACHER'}">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
               <i class="bi bi-tools me-1"></i>Manage
@@ -74,15 +74,58 @@
               <li><a class="dropdown-item" href="${ctx}/gradebook">
                 <i class="bi bi-table me-2 text-primary"></i>Grade Book
               </a></li>
+              <li><hr class="dropdown-divider"/></li>
+              <li><a class="dropdown-item" href="${ctx}/omr">
+                <i class="bi bi-upc-scan me-2 text-success"></i>OMR Evaluations
+              </a></li>
+              <li><a class="dropdown-item" href="${ctx}/teacher/attendance">
+                <i class="bi bi-calendar-check me-2 text-success"></i>Attendance
+              </a></li>
+              <li><a class="dropdown-item" href="${ctx}/teacher/analytics">
+                <i class="bi bi-bar-chart me-2 text-warning"></i>Student Analytics
+              </a></li>
             </ul>
           </li>
         </c:if>
 
         <c:if test="${user.role == 'STUDENT'}">
-          <li class="nav-item">
-            <a class="nav-link" href="${ctx}/certificate/my">
-              <i class="bi bi-patch-check me-1"></i>Certificates
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+              <i class="bi bi-stars me-1"></i>AI Tools
             </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="${ctx}/notewise">
+                <i class="bi bi-camera me-2 text-purple" style="color:#7c3aed"></i>NoteWise AI
+              </a></li>
+              <li><a class="dropdown-item" href="${ctx}/ai-doubt">
+                <i class="bi bi-robot me-2 text-primary"></i>AI Doubt Solver
+              </a></li>
+              <li><a class="dropdown-item" href="${ctx}/flashcards">
+                <i class="bi bi-stack me-2 text-warning"></i>Flashcards
+              </a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+              <i class="bi bi-person-check me-1"></i>My Progress
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="${ctx}/progress-dashboard">
+                <i class="bi bi-bar-chart me-2 text-primary"></i>Progress Dashboard
+              </a></li>
+              <li><a class="dropdown-item" href="${ctx}/study-planner">
+                <i class="bi bi-calendar-check me-2 text-success"></i>Study Planner
+              </a></li>
+              <li><a class="dropdown-item" href="${ctx}/my-attendance">
+                <i class="bi bi-person-check me-2 text-info"></i>My Attendance
+              </a></li>
+              <li><a class="dropdown-item" href="${ctx}/omr">
+                <i class="bi bi-upc-scan me-2 text-secondary"></i>OMR Results
+              </a></li>
+              <li><a class="dropdown-item" href="${ctx}/certificate/my">
+                <i class="bi bi-patch-check me-2 text-warning"></i>Certificates
+              </a></li>
+            </ul>
           </li>
         </c:if>
 
@@ -92,11 +135,25 @@
               <i class="bi bi-shield-lock me-1"></i>Admin
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="${ctx}/dashboard">
-                <i class="bi bi-speedometer2 me-2 text-primary"></i>Dashboard
+              <li><a class="dropdown-item" href="${ctx}/admin/dashboard-charts">
+                <i class="bi bi-speedometer2 me-2 text-primary"></i>Analytics Dashboard
               </a></li>
+              <li><a class="dropdown-item" href="${ctx}/admin/teacher-requests">
+                <i class="bi bi-person-check me-2 text-warning"></i>Teacher Requests
+              </a></li>
+              <li><a class="dropdown-item" href="${ctx}/admin/course-approval">
+                <i class="bi bi-patch-check me-2 text-success"></i>Course Approvals
+              </a></li>
+              <li><hr class="dropdown-divider"/></li>
+              <li><a class="dropdown-item" href="${ctx}/admin/announcements">
+                <i class="bi bi-megaphone me-2 text-danger"></i>Announcements
+              </a></li>
+              <li><a class="dropdown-item" href="${ctx}/admin/bulk-import">
+                <i class="bi bi-upload me-2 text-info"></i>Bulk Student Import
+              </a></li>
+              <li><hr class="dropdown-divider"/></li>
               <li><a class="dropdown-item" href="${ctx}/admin/activity-log">
-                <i class="bi bi-journal-text me-2 text-primary"></i>Activity Log
+                <i class="bi bi-journal-text me-2 text-secondary"></i>Activity Log
               </a></li>
             </ul>
           </li>
@@ -105,6 +162,12 @@
       </ul>
 
       <ul class="navbar-nav ms-auto align-items-center gap-1">
+
+        <li class="nav-item">
+          <a class="nav-link" href="${ctx}/search" title="Search">
+            <i class="bi bi-search fs-5"></i>
+          </a>
+        </li>
 
         <li class="nav-item">
           <a class="nav-link" href="${ctx}/chat" title="Chat">

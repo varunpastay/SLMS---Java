@@ -47,6 +47,7 @@ public class RegisterServlet extends HttpServlet {
         String firstName = req.getParameter("firstName");
         String lastName  = req.getParameter("lastName");
         String role      = req.getParameter("role");
+        String reason    = req.getParameter("teacherReason");
 
         if (username == null || username.isBlank() || email == null || email.isBlank()
                 || password == null || password.isBlank()) {
@@ -94,6 +95,9 @@ public class RegisterServlet extends HttpServlet {
             session.setAttribute("pendingUser", pending);
             session.setAttribute("pendingOtp", otp);
             session.setAttribute("otpExpiry", expiry);
+            if ("TEACHER".equals(role)) {
+                session.setAttribute("teacherReason", reason != null ? reason.trim() : "");
+            }
 
             // Send OTP email asynchronously
             String fullName = ((firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "")).trim();

@@ -263,7 +263,170 @@ CREATE TABLE IF NOT EXISTS activity_logs (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
--- Seed: default admin account (password: Admin@123)
+-- ── Teacher Registration Requests ────────────────────────────────────────────
+-- Holds teacher sign-up requests until an admin approves or rejects them
+
+CREATE TABLE IF NOT EXISTS teacher_requests (
+    id            INT AUTO_INCREMENT PRIMARY KEY,
+    first_name    VARCHAR(100),
+    last_name     VARCHAR(100),
+    username      VARCHAR(150) NOT NULL,
+    email         VARCHAR(255) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    reason        TEXT,
+    status        ENUM('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
+    reviewed_by   INT,
+    reviewed_at   DATETIME,
+    created_at    DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (reviewed_by) REFERENCES users(id) ON DELETE SET NULL
+);
+
+-- ── OMR Evaluation Tables ────────────────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS omr_evaluations (
+    id                INT AUTO_INCREMENT PRIMARY KEY,
+    teacher_id        INT NOT NULL,
+    course_id         INT,
+    title             VARCHAR(255) NOT NULL,
+    total_questions   INT NOT NULL,
+    marks_per_correct DECIMAL(5,2) DEFAULT 1.00,
+    negative_marks    DECIMAL(5,2) DEFAULT 0.00,
+    answer_key        TEXT NOT NULL,
+    total_marks       DECIMAL(7,2) NOT NULL,
+    created_at        DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (teacher_id) REFERENCES users(id),
+    FOREIGN KEY (course_id)  REFERENCES courses(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS omr_results (
+    id                  INT AUTO_INCREMENT PRIMARY KEY,
+    evaluation_id       INT NOT NULL,
+    student_id          INT,
+    student_identifier  VARCHAR(255) NOT NULL,
+    student_name        VARCHAR(255),
+    responses           TEXT NOT NULL,
+    correct_count       INT DEFAULT 0,
+    wrong_count         INT DEFAULT 0,
+    unattempted_count   INT DEFAULT 0,
+    marks_obtained      DECIMAL(7,2) DEFAULT 0,
+    percentage          DECIMAL(5,2) DEFAULT 0,
+    FOREIGN KEY (evaluation_id) REFERENCES omr_evaluations(id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id)    REFERENCES users(id) ON DELETE SET NULL
+);
+
+-- ── NoteWise Tables ──────────────────────────────────────────────────────────
+
+-- Stores each note-upload analysis session per student
+CREATE TABLE IF NOT EXISTS notewise_sessions (
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+    student_id     INT NOT NULL,
+    image_path     VARCHAR(255),
+    topic          VARCHAR(255),
+    difficulty     VARCHAR(50),
+    study_minutes  INT DEFAULT 10,
+    extracted_text MEDIUMTEXT,
+    concepts       TEXT,
+    summary        TEXT,
+    explanation    MEDIUMTEXT,
+    created_at     DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Stores AI-generated quiz questions (answers kept server-side)
+CREATE TABLE IF NOT EXISTS notewise_quizzes (
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+    session_id     INT NOT NULL,
+    student_id     INT NOT NULL,
+    questions_json MEDIUMTEXT NOT NULL,
+    score          INT DEFAULT 0,
+    total          INT DEFAULT 0,
+    completed      BOOLEAN DEFAULT FALSE,
+    attempted_at   DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (session_id) REFERENCES notewise_sessions(id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id) REFERENCES users(id)
+);
+
+-- XP, streaks, and badge progress per student
+CREATE TABLE IF NOT EXISTS notewise_xp (
+    student_id  INT PRIMARY KEY,
+    total_xp    INT DEFAULT 0,
+    streak_days INT DEFAULT 0,
+    last_active DATE,
+    FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- ── End NoteWise Tables ───────────────────────────────────────────────────
+
+-- ── Attendance ───────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS attendance (
+    id              INT AUTO_INCREMENT PRIMARY KEY,
+    student_id      INT NOT NULL,
+    course_id       INT NOT NULL,
+    attendance_date DATE NOT NULL,
+    status          ENUM('PRESENT','ABSENT','LATE') NOT NULL DEFAULT 'PRESENT',
+    marked_by       INT,
+    created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_attendance (student_id, course_id, attendance_date),
+    FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id)  REFERENCES courses(id) ON DELETE CASCADE,
+    FOREIGN KEY (marked_by)  REFERENCES users(id) ON DELETE SET NULL
+);
+
+-- ── Flashcards ───────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS flashcards (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    student_id  INT NOT NULL,
+    course_id   INT,
+    front_text  TEXT NOT NULL,
+    back_text   TEXT NOT NULL,
+    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id)  REFERENCES courses(id) ON DELETE SET NULL
+);
+
+-- ── Study Goals ──────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS study_goals (
+    id            INT AUTO_INCREMENT PRIMARY KEY,
+    student_id    INT NOT NULL,
+    course_id     INT,
+    goal_title    VARCHAR(255) NOT NULL,
+    target_date   DATE,
+    hours_per_day DECIMAL(4,1) DEFAULT 1.0,
+    status        ENUM('IN_PROGRESS','COMPLETED') DEFAULT 'IN_PROGRESS',
+    created_at    DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id)  REFERENCES courses(id) ON DELETE SET NULL
+);
+
+-- ── Study Sessions ───────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS study_sessions (
+    id               INT AUTO_INCREMENT PRIMARY KEY,
+    student_id       INT NOT NULL,
+    course_id        INT,
+    session_date     DATE NOT NULL,
+    duration_minutes INT NOT NULL DEFAULT 0,
+    notes            TEXT,
+    created_at       DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id)  REFERENCES courses(id) ON DELETE SET NULL
+);
+
+-- ── Broadcasts (Admin Announcements) ─────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS broadcasts (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id   INT NOT NULL,
+    title       VARCHAR(255) NOT NULL,
+    message     TEXT NOT NULL,
+    target_role ENUM('ALL','STUDENT','TEACHER','ADMIN') DEFAULT 'ALL',
+    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- ── Course Approval Columns ──────────────────────────────────────────────────
+ALTER TABLE courses ADD COLUMN IF NOT EXISTS approval_status ENUM('DRAFT','PENDING','APPROVED','REJECTED') DEFAULT 'DRAFT';
+ALTER TABLE courses ADD COLUMN IF NOT EXISTS rejection_note TEXT;
+
+-- ── Seed: default admin account (password: Admin@123)
 INSERT IGNORE INTO users (username, email, password_hash, role, first_name, last_name, is_active)
 VALUES ('admin', 'admin@slms.com',
         '$2a$12$RpCnYHJXq.E6lQBJTLrpGOHqBFuXFGMFd4RO5oiKjH9hJwEv7yAjq',

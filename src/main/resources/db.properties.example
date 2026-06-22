@@ -1,0 +1,21 @@
+# Copy this file to db.properties and fill in your values
+# db.properties is excluded from git (contains secrets)
+
+# Database connection
+jdbcUrl=jdbc:mysql://localhost:3306/slms_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+dataSource.user=root
+dataSource.password=YOUR_MYSQL_PASSWORD
+
+# HikariCP pool
+maximumPoolSize=10
+minimumIdle=2
+connectionTimeout=30000
+idleTimeout=600000
+maxLifetime=1800000
+
+# Gemini AI API Key
+# Get your key from https://aistudio.google.com/app/apikey
+gemini.api.key=YOUR_GEMINI_API_KEY
+
+# Upload directory (absolute path for file uploads)
+upload.dir=C:/slms_uploads

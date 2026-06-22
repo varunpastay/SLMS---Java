@@ -121,6 +121,10 @@
         <span class="section-title mb-0"><i class="bi bi-lightning"></i>Quick Actions</span>
       </div>
       <div class="card-body d-flex flex-column gap-2">
+        <a href="${ctx}/notewise" class="btn text-start text-white"
+           style="background:linear-gradient(135deg,#6366f1,#a855f7)">
+          <i class="bi bi-stars me-2"></i>NoteWise AI Tutor
+        </a>
         <a href="${ctx}/calendar" class="btn btn-outline-primary text-start">
           <i class="bi bi-calendar3 me-2"></i>View Calendar
         </a>

@@ -160,23 +160,32 @@
       <input type="password" name="confirmPassword" class="form-control" placeholder="Repeat password" required/>
     </div>
 
-    <div class="mb-4">
+    <div class="mb-3">
       <label class="form-label">I am a…</label>
       <div class="role-options">
         <div class="role-option">
-          <input type="radio" name="role" id="roleStudent" value="STUDENT" checked/>
+          <input type="radio" name="role" id="roleStudent" value="STUDENT" checked onchange="onRoleChange()"/>
           <label for="roleStudent">
             <i class="bi bi-person-graduation"></i>Student
           </label>
         </div>
         <div class="role-option">
-          <input type="radio" name="role" id="roleTeacher" value="TEACHER"/>
+          <input type="radio" name="role" id="roleTeacher" value="TEACHER" onchange="onRoleChange()"/>
           <label for="roleTeacher">
             <i class="bi bi-person-badge"></i>Teacher
           </label>
         </div>
       </div>
     </div>
+
+    <div id="teacherSection" style="display:none">
+      <div class="alert alert-warning py-2 px-3 mb-3" style="font-size:.85rem;border-radius:10px">
+        <i class="bi bi-clock-history me-1"></i>
+        Teacher accounts require <strong>admin approval</strong>. You will receive an email once reviewed.
+      </div>
+    </div>
+
+    <div class="mb-4"></div>
 
     <button type="submit" class="btn-register">
       <i class="bi bi-person-plus me-2"></i>Create Account
@@ -191,6 +200,10 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+  function onRoleChange() {
+    const isTeacher = document.getElementById('roleTeacher').checked;
+    document.getElementById('teacherSection').style.display = isTeacher ? 'block' : 'none';
+  }
   function checkStrength(v) {
     const fill = document.getElementById('strengthFill');
     const txt  = document.getElementById('strengthText');
