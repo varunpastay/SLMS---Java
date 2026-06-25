@@ -102,6 +102,7 @@ public class RegisterServlet extends HttpServlet {
             // Send OTP email asynchronously
             String fullName = ((firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "")).trim();
             final String otpCopy = otp;
+            System.out.println("[OTP-DEBUG] Email=" + email + " OTP=" + otpCopy);
             new Thread(() -> EmailUtil.sendOtp(email, fullName, otpCopy)).start();
 
             resp.sendRedirect(req.getContextPath() + "/verify-otp");
