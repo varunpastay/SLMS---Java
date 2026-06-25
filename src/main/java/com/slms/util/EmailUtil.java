@@ -4,7 +4,6 @@ import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -13,16 +12,22 @@ public class EmailUtil {
     private static Session mailSession;
     private static String fromAddress;
 
-    static {
-        try (InputStream in = EmailUtil.class.getResourceAsStream("/db.properties")) {
-            Properties props = new Properties();
-            props.load(in);
+    private static String env(String key, String fallback) {
+        String v = System.getenv(key);
+        return (v != null && !v.isEmpty()) ? v : fallback;
+    }
 
-            fromAddress = props.getProperty("mail.from", "SLMS <noreply@slms.com>");
-            String host = props.getProperty("mail.host", "smtp.gmail.com");
-            String port = props.getProperty("mail.port", "587");
-            final String username = props.getProperty("mail.username", "");
-            final String password = props.getProperty("mail.password", "");
+    static {
+        try {
+            Properties props = new Properties();
+            InputStream in = EmailUtil.class.getResourceAsStream("/db.properties");
+            if (in != null) { props.load(in); in.close(); }
+
+            fromAddress = env("MAIL_FROM", props.getProperty("mail.from", "SLMS <noreply@slms.com>"));
+            String host = env("MAIL_HOST", props.getProperty("mail.host", "smtp.gmail.com"));
+            String port = env("MAIL_PORT", props.getProperty("mail.port", "587"));
+            final String username = env("MAIL_USERNAME", props.getProperty("mail.username", ""));
+            final String password = env("MAIL_PASSWORD", props.getProperty("mail.password", ""));
 
             Properties mailProps = new Properties();
             mailProps.put("mail.smtp.host", host);
@@ -36,12 +41,17 @@ public class EmailUtil {
                     return new PasswordAuthentication(username, password);
                 }
             });
-        } catch (IOException e) {
-            throw new ExceptionInInitializerError(e);
+        } catch (Exception e) {
+            System.out.println("[EmailUtil] WARNING: email not configured: " + e.getMessage());
+            mailSession = null;
         }
     }
 
     public static void send(String toEmail, String subject, String htmlBody) {
+        if (mailSession == null) {
+            System.out.println("[EmailUtil] Cannot send email - not configured. To: " + toEmail + " | Subject: " + subject);
+            return;
+        }
         try {
             MimeMessage msg = new MimeMessage(mailSession);
             msg.setFrom(new InternetAddress(fromAddress));
