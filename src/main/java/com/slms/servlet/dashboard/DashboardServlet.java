@@ -54,6 +54,7 @@ public class DashboardServlet extends HttpServlet {
                 req.getRequestDispatcher("/views/dashboard/adminDashboard.jsp").forward(req, resp);
             }
         } catch (Exception e) {
+            e.printStackTrace(System.err);
             throw new ServletException(e);
         }
     }
