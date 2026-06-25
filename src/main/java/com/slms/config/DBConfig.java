@@ -19,19 +19,30 @@ public class DBConfig {
             InputStream in = DBConfig.class.getResourceAsStream("/db.properties");
             if (in != null) { props.load(in); in.close(); }
 
+            String url  = env("DB_URL",      props.getProperty("jdbcUrl"));
+            String user = env("DB_USER",     props.getProperty("dataSource.user"));
+            String pass = env("DB_PASSWORD", props.getProperty("dataSource.password"));
+
+            System.err.println("[DBConfig] DB_URL=" + url);
+            System.err.println("[DBConfig] DB_USER=" + user);
+            System.err.println("[DBConfig] DB_PASSWORD=" + (pass != null ? "***set***" : "NULL"));
+
             HikariConfig config = new HikariConfig();
             config.setDriverClassName("com.mysql.cj.jdbc.Driver");
-            config.setJdbcUrl(env("DB_URL", props.getProperty("jdbcUrl")));
-            config.setUsername(env("DB_USER", props.getProperty("dataSource.user")));
-            config.setPassword(env("DB_PASSWORD", props.getProperty("dataSource.password")));
-            config.setMaximumPoolSize(Integer.parseInt(env("DB_POOL_MAX", props.getProperty("maximumPoolSize", "5"))));
-            config.setMinimumIdle(Integer.parseInt(env("DB_POOL_MIN", props.getProperty("minimumIdle", "1"))));
-            config.setConnectionTimeout(Long.parseLong(props.getProperty("connectionTimeout", "30000")));
-            config.setIdleTimeout(Long.parseLong(props.getProperty("idleTimeout", "600000")));
-            config.setMaxLifetime(Long.parseLong(props.getProperty("maxLifetime", "1800000")));
+            config.setJdbcUrl(url);
+            config.setUsername(user);
+            config.setPassword(pass);
+            config.setMaximumPoolSize(5);
+            config.setMinimumIdle(1);
+            config.setConnectionTimeout(30000);
+            config.setIdleTimeout(600000);
+            config.setMaxLifetime(1800000);
 
             dataSource = new HikariDataSource(config);
-        } catch (IOException e) {
+            System.err.println("[DBConfig] Connection pool initialized successfully");
+        } catch (Exception e) {
+            System.err.println("[DBConfig] FATAL: " + e.getClass().getName() + ": " + e.getMessage());
+            e.printStackTrace(System.err);
             throw new ExceptionInInitializerError(e);
         }
     }
