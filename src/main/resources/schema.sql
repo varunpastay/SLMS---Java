@@ -389,9 +389,10 @@ CREATE TABLE IF NOT EXISTS study_goals (
     id            INT AUTO_INCREMENT PRIMARY KEY,
     student_id    INT NOT NULL,
     course_id     INT,
-    goal_title    VARCHAR(255) NOT NULL,
+    title         VARCHAR(255) NOT NULL,
+    subject       VARCHAR(255),
     target_date   DATE,
-    hours_per_day DECIMAL(4,1) DEFAULT 1.0,
+    daily_minutes INT DEFAULT 60,
     status        ENUM('IN_PROGRESS','COMPLETED') DEFAULT 'IN_PROGRESS',
     created_at    DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -403,8 +404,9 @@ CREATE TABLE IF NOT EXISTS study_sessions (
     id               INT AUTO_INCREMENT PRIMARY KEY,
     student_id       INT NOT NULL,
     course_id        INT,
-    session_date     DATE NOT NULL,
-    duration_minutes INT NOT NULL DEFAULT 0,
+    date             DATE NOT NULL,
+    minutes_studied  INT NOT NULL DEFAULT 0,
+    subject          VARCHAR(255),
     notes            TEXT,
     created_at       DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -418,7 +420,7 @@ CREATE TABLE IF NOT EXISTS broadcasts (
     title       VARCHAR(255) NOT NULL,
     message     TEXT NOT NULL,
     target_role ENUM('ALL','STUDENT','TEACHER','ADMIN') DEFAULT 'ALL',
-    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    sent_at     DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE
 );
 

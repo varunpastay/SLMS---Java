@@ -81,7 +81,7 @@ public class EmailUtil {
                       "<h2 style='color:#0d6efd'>Welcome to SLMS!</h2>" +
                       "<p>Hi <strong>" + name + "</strong>,</p>" +
                       "<p>Your account has been verified and created successfully.</p>" +
-                      "<p>You can now <a href='http://localhost:8081/slms/login' style='color:#0d6efd'>log in</a> and start learning today!</p>" +
+                      "<p>You can now <a href='https://slms-java.onrender.com/login' style='color:#0d6efd'>log in</a> and start learning today!</p>" +
                       "<p style='color:#6c757d;font-size:.9rem'>The SLMS Team</p>" +
                       "</div>";
         send(toEmail, "Welcome to SLMS!", body);
