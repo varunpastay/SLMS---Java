@@ -60,7 +60,14 @@ public class LoginServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/dashboard");
         } catch (Throwable e) {
             e.printStackTrace(System.err);
-            req.setAttribute("error", "An error occurred: " + e.getClass().getName() + ": " + e.getMessage());
+            StringBuilder msg = new StringBuilder();
+            Throwable t = e;
+            while (t != null) {
+                if (msg.length() > 0) msg.append(" → ");
+                msg.append(t.getClass().getSimpleName()).append(": ").append(t.getMessage());
+                t = t.getCause();
+            }
+            req.setAttribute("error", msg.toString());
             req.getRequestDispatcher("/views/auth/login.jsp").forward(req, resp);
         }
     }

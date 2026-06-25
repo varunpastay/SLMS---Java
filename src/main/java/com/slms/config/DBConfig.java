@@ -23,9 +23,9 @@ public class DBConfig {
             String user = env("DB_USER",     props.getProperty("dataSource.user"));
             String pass = env("DB_PASSWORD", props.getProperty("dataSource.password"));
 
-            System.err.println("[DBConfig] DB_URL=" + url);
-            System.err.println("[DBConfig] DB_USER=" + user);
-            System.err.println("[DBConfig] DB_PASSWORD=" + (pass != null ? "***set***" : "NULL"));
+            System.out.println("[DBConfig] DB_URL=" + url);
+            System.out.println("[DBConfig] DB_USER=" + user);
+            System.out.println("[DBConfig] DB_PASSWORD=" + (pass != null ? "***set***" : "NULL"));
 
             HikariConfig config = new HikariConfig();
             config.setDriverClassName("com.mysql.cj.jdbc.Driver");
@@ -39,10 +39,10 @@ public class DBConfig {
             config.setMaxLifetime(1800000);
 
             dataSource = new HikariDataSource(config);
-            System.err.println("[DBConfig] Connection pool initialized successfully");
+            System.out.println("[DBConfig] Connection pool initialized successfully");
         } catch (Exception e) {
-            System.err.println("[DBConfig] FATAL: " + e.getClass().getName() + ": " + e.getMessage());
-            e.printStackTrace(System.err);
+            System.out.println("[DBConfig] FATAL: " + e.getClass().getName() + ": " + e.getMessage());
+            e.printStackTrace(System.out);
             throw new ExceptionInInitializerError(e);
         }
     }
