@@ -58,9 +58,9 @@ public class LoginServlet extends HttpServlet {
             SessionUtil.setLoggedUser(req, user);
             activityLogDAO.log(user.getId(), "LOGIN", "User logged in", req.getRemoteAddr());
             resp.sendRedirect(req.getContextPath() + "/dashboard");
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace(System.err);
-            req.setAttribute("error", "An error occurred: " + e.getMessage());
+            req.setAttribute("error", "An error occurred: " + e.getClass().getName() + ": " + e.getMessage());
             req.getRequestDispatcher("/views/auth/login.jsp").forward(req, resp);
         }
     }
