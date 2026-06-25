@@ -30,9 +30,12 @@ public class AIDoubtServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        try (InputStream in = getClass().getResourceAsStream("/db.properties")) {
-            Properties p = new Properties(); p.load(in);
-            geminiApiKey = p.getProperty("gemini.api.key", "");
+        try {
+            String envKey = System.getenv("GEMINI_API_KEY");
+            if (envKey != null && !envKey.isEmpty()) { geminiApiKey = envKey; return; }
+            InputStream in = getClass().getResourceAsStream("/db.properties");
+            if (in != null) { Properties p = new Properties(); p.load(in); in.close();
+                geminiApiKey = p.getProperty("gemini.api.key", ""); }
         } catch (Exception e) { throw new ServletException(e); }
     }
 

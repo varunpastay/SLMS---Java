@@ -14,17 +14,18 @@ public class DBConfig {
     private static final HikariDataSource dataSource;
 
     static {
-        try (InputStream in = DBConfig.class.getResourceAsStream("/db.properties")) {
+        try {
             Properties props = new Properties();
-            props.load(in);
+            InputStream in = DBConfig.class.getResourceAsStream("/db.properties");
+            if (in != null) { props.load(in); in.close(); }
 
             HikariConfig config = new HikariConfig();
             config.setDriverClassName("com.mysql.cj.jdbc.Driver");
-            config.setJdbcUrl(props.getProperty("jdbcUrl"));
-            config.setUsername(props.getProperty("dataSource.user"));
-            config.setPassword(props.getProperty("dataSource.password"));
-            config.setMaximumPoolSize(Integer.parseInt(props.getProperty("maximumPoolSize", "10")));
-            config.setMinimumIdle(Integer.parseInt(props.getProperty("minimumIdle", "2")));
+            config.setJdbcUrl(env("DB_URL", props.getProperty("jdbcUrl")));
+            config.setUsername(env("DB_USER", props.getProperty("dataSource.user")));
+            config.setPassword(env("DB_PASSWORD", props.getProperty("dataSource.password")));
+            config.setMaximumPoolSize(Integer.parseInt(env("DB_POOL_MAX", props.getProperty("maximumPoolSize", "5"))));
+            config.setMinimumIdle(Integer.parseInt(env("DB_POOL_MIN", props.getProperty("minimumIdle", "1"))));
             config.setConnectionTimeout(Long.parseLong(props.getProperty("connectionTimeout", "30000")));
             config.setIdleTimeout(Long.parseLong(props.getProperty("idleTimeout", "600000")));
             config.setMaxLifetime(Long.parseLong(props.getProperty("maxLifetime", "1800000")));
@@ -33,6 +34,11 @@ public class DBConfig {
         } catch (IOException e) {
             throw new ExceptionInInitializerError(e);
         }
+    }
+
+    private static String env(String key, String fallback) {
+        String val = System.getenv(key);
+        return (val != null && !val.isEmpty()) ? val : fallback;
     }
 
     public static Connection getConnection() throws SQLException {

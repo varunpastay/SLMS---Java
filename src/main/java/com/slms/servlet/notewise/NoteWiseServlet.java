@@ -39,11 +39,20 @@ public class NoteWiseServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        try (InputStream in = getClass().getResourceAsStream("/db.properties")) {
-            Properties props = new Properties();
-            props.load(in);
-            geminiApiKey = props.getProperty("gemini.api.key", "");
-            uploadDir = props.getProperty("upload.dir", "C:/slms_uploads") + "/notewise";
+        try {
+            String envKey = System.getenv("GEMINI_API_KEY");
+            if (envKey != null && !envKey.isEmpty()) { geminiApiKey = envKey; }
+            String envDir = System.getenv("UPLOAD_DIR");
+            uploadDir = (envDir != null && !envDir.isEmpty() ? envDir : null);
+            if (geminiApiKey == null || uploadDir == null) {
+                InputStream in = getClass().getResourceAsStream("/db.properties");
+                if (in != null) {
+                    Properties props = new Properties(); props.load(in); in.close();
+                    if (geminiApiKey == null) geminiApiKey = props.getProperty("gemini.api.key", "");
+                    if (uploadDir == null) uploadDir = props.getProperty("upload.dir", "/opt/slms_uploads");
+                }
+            }
+            uploadDir = uploadDir + "/notewise";
             Files.createDirectories(Paths.get(uploadDir));
         } catch (Exception e) {
             throw new ServletException(e);
